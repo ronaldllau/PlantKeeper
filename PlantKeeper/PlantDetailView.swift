@@ -28,6 +28,10 @@ struct PlantDetailView: View {
             Text(plant.species)
                 .font(.title3)
                 .foregroundColor(.secondary)
+            
+            Text("Next watering: \(plant.nextWateringDate, style: .date)")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
 
             Spacer()
         }

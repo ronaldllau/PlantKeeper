@@ -13,4 +13,15 @@ struct Plant: Identifiable {
     let species: String
     var journals: [JournalEntry] = []
     var wateringFrequency: Int // in days
+    var lastWatered: Date = Date()
+}
+
+extension Plant {
+    var nextWateringDate: Date {
+        Calendar.current.date(
+            byAdding: .day,
+            value: wateringFrequency,
+            to: lastWatered
+        ) ?? Date()
+    }
 }
