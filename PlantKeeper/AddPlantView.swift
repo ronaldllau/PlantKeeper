@@ -14,6 +14,7 @@ struct AddPlantView: View {
 
     @State private var name = ""
     @State private var species = ""
+    @State private var wateringFrequency = 2
 
     var body: some View {
         NavigationView {
@@ -21,6 +22,9 @@ struct AddPlantView: View {
                 Section(header: Text("Plant Details")) {
                     TextField("Name", text: $name)
                     TextField("Species", text: $species)
+                }
+                Section(header: Text("Watering Frequency")) {
+                    Stepper("\(wateringFrequency) days", value: $wateringFrequency, in: 1...30)
                 }
             }
             .navigationTitle("Add Plant")
@@ -32,10 +36,14 @@ struct AddPlantView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let newPlant = Plant(name: name, species: species)
+                        let newPlant = Plant(
+                            name: name,
+                            species: species,
+                            wateringFrequency: wateringFrequency
+                        )
                         plants.append(newPlant)
 
-                        scheduleWateringReminder(for: newPlant, in: 2) // remind in 2 days
+                        scheduleWateringReminder(for: newPlant, in: wateringFrequency) // remind in 2 days
                         
                         dismiss()
                     }
@@ -54,7 +62,7 @@ struct AddPlantView: View {
         // Trigger after X days (for now)
         let trigger = UNTimeIntervalNotificationTrigger(
             timeInterval: TimeInterval(60 * 60 * 24 * days),
-            repeats: false
+            repeats: true
         )
 
         let request = UNNotificationRequest(

@@ -12,4 +12,5 @@ struct Plant: Identifiable {
     let name: String
     let species: String
     var journals: [JournalEntry] = []
+    var wateringFrequency: Int // in days
 }
