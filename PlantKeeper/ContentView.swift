@@ -35,18 +35,32 @@ struct ContentView: View {
 //                .font(.subheadline)
 //        }
 //        .padding()
-        
+
         NavigationView {
             List($plants) { $plant in
                 NavigationLink(destination: PlantDetailView(plant: $plant)) {
-                    VStack(alignment: .leading) {
-                        Text(plant.name)
-                            .font(.headline)
-                        Text(plant.species)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    HStack {
+                        Image(systemName: "leaf.fill")
+                            .foregroundColor(.green)
+                            .frame(width: 30, height: 30)
+                        
+                        VStack(alignment: .leading) {
+                            Text(plant.name)
+                                .font(.headline)
+                            Text(plant.species)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Text("💧 \(plant.wateringFrequency)d")
+                            .font(.caption)
+                            .foregroundColor(.blue)
                     }
+                    .padding(.vertical, 4)
                 }
+                .listStyle(InsetGroupedListStyle())
             }
             .navigationTitle("My Plants")
             .toolbar {

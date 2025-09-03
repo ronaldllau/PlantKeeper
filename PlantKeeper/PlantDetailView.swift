@@ -14,42 +14,50 @@ struct PlantDetailView: View {
     @State private var editingEntry: JournalEntry?
 
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "leaf.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .foregroundColor(.green)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "leaf.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 60, height: 60)
+                    .foregroundColor(.green)
 
-            Text(plant.name)
-                .font(.largeTitle)
-                .padding(.top)
-
-            Text(plant.species)
-                .font(.title3)
-                .foregroundColor(.secondary)
+                VStack(alignment: .leading) {
+                    Text(plant.name)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    Text(plant.species)
+                        .font(.title3)
+                        .foregroundColor(.secondary)
+                }
+            }
             
+            Divider()
+
             Text("Next watering: \(plant.nextWateringDate, style: .date)")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
+                .font(.headline)
+                .foregroundColor(.blue)
+
+            Spacer()
+
             Button(action: {
                 markAsWatered()
             }) {
                 Label("Watered Today", systemImage: "drop.fill")
                     .font(.headline)
                     .padding()
+                    .frame(maxWidth: .infinity)
                     .background(Color.blue.opacity(0.2))
                     .foregroundColor(.blue)
-                    .cornerRadius(10)
+                    .cornerRadius(12)
             }
-
-
+            
             Spacer()
+
         }
         .padding()
         
-        Divider()
+//        Divider()
 
         List {
             if plant.journals.isEmpty {
@@ -59,6 +67,7 @@ struct PlantDetailView: View {
                 ForEach(plant.journals) { entry in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(entry.text)
+                            .font(.body)
                         if entry.isFromToday {
                             Text("Today")
                                 .font(.caption)
@@ -90,9 +99,10 @@ struct PlantDetailView: View {
                         }
                     }
                 }
+                
             }
         }
-        .navigationTitle(plant.name)
+//        .navigationTitle(plant.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingAddJournal = true }) {
@@ -146,5 +156,4 @@ struct PlantDetailView: View {
 
         center.add(request)
     }
-
 }
