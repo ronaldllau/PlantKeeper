@@ -32,6 +32,18 @@ struct PlantDetailView: View {
             Text("Next watering: \(plant.nextWateringDate, style: .date)")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+            
+            Button(action: {
+                markAsWatered()
+            }) {
+                Label("Watered Today", systemImage: "drop.fill")
+                    .font(.headline)
+                    .padding()
+                    .background(Color.blue.opacity(0.2))
+                    .foregroundColor(.blue)
+                    .cornerRadius(10)
+            }
+
 
             Spacer()
         }
@@ -101,4 +113,38 @@ struct PlantDetailView: View {
             plant.journals.remove(at: index)
         }
     }
+    
+    func markAsWatered() {
+        plant.lastWatered = Date()
+
+        // Reschedule the reminder from today
+        scheduleWateringReminder(for: plant, in: plant.wateringFrequency)
+    }
+    
+    func scheduleWateringReminder(for plant: Plant, in days: Int) {
+        let center = UNUserNotificationCenter.current()
+
+        // Remove any old reminder for this plant
+        center.removePendingNotificationRequests(withIdentifiers: [plant.id.uuidString])
+        
+        let content = UNMutableNotificationContent()
+        content.title = "Water your plant 🌱"
+        content.body = "Don't forget to water \(plant.name)!"
+        content.sound = .default
+
+        // Trigger after X days (for now)
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: TimeInterval(60 * 60 * 24 * days),
+            repeats: true
+        )
+
+        let request = UNNotificationRequest(
+            identifier: plant.id.uuidString,
+            content: content,
+            trigger: trigger
+        )
+
+        center.add(request)
+    }
+
 }
