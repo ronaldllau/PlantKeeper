@@ -15,7 +15,7 @@ struct PlantDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
+            HStack(spacing: 10) {
                 Image(systemName: "leaf.circle.fill")
                     .resizable()
                     .scaledToFit()
@@ -31,7 +31,6 @@ struct PlantDetailView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
             Divider()
 
             Text("Next watering: \(plant.nextWateringDate, style: .date)")
@@ -57,12 +56,33 @@ struct PlantDetailView: View {
         }
         .padding()
         
-//        Divider()
 
         List {
             if plant.journals.isEmpty {
-                Text("No journal entries yet.")
-                    .foregroundColor(.secondary)
+
+                    HStack {
+                        Image(systemName: "book")
+                            .font(.largeTitle)
+                            .foregroundColor(Color.gray)
+//                            .padding()
+//                            .background(Color.black.opacity(0.1))
+                        
+                        HStack {
+                            Spacer()
+                            VStack(spacing: 8) {
+                                Text("No journal entries yet")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                Text("Start \(plant.name)’s journey 🌱")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+//                            .background(Color.black.opacity(0.1))
+                            Spacer()
+                        }
+                    }
+                    .padding()
+//                    .background(Color.green.opacity(0.1))
             } else {
                 ForEach(plant.journals) { entry in
                     VStack(alignment: .leading, spacing: 4) {
@@ -99,9 +119,9 @@ struct PlantDetailView: View {
                         }
                     }
                 }
-                
             }
         }
+
 //        .navigationTitle(plant.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -156,4 +176,8 @@ struct PlantDetailView: View {
 
         center.add(request)
     }
+}
+
+#Preview {
+    ContentView()
 }

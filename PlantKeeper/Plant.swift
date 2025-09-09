@@ -11,6 +11,7 @@ struct Plant: Identifiable {
     let id = UUID()
     let name: String
     let species: String
+    
     var journals: [JournalEntry] = []
     var wateringFrequency: Int // in days
     var lastWatered: Date = Date()
@@ -24,4 +25,7 @@ extension Plant {
             to: lastWatered
         ) ?? Date()
     }
+    var isOverdue: Bool {
+            Date() > nextWateringDate
+        }
 }

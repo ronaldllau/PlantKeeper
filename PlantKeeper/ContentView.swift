@@ -19,22 +19,6 @@ struct ContentView: View {
     @State private var showingAddPlant = false
     
     var body: some View {
-//        VStack {
-//            HStack {
-//                Image(systemName: "leaf.fill")
-//                    .resizable()
-//                    .scaledToFit()
-//                    .frame(width: 40, height: 40)
-//                    .foregroundColor(.green)
-//
-//                Text("Hello, Plant Keeper 🌱")
-//                    .font(.title)
-//            }
-//
-//            Text("Remember to water your plants 💧")
-//                .font(.subheadline)
-//        }
-//        .padding()
 
         NavigationView {
             List($plants) { $plant in
@@ -54,13 +38,12 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        Text("💧 \(plant.wateringFrequency)d")
+                        Text(plant.isOverdue ? "🚨 Overdue" :"💧 \(plant.wateringFrequency)d")
                             .font(.caption)
-                            .foregroundColor(.blue)
+                            .foregroundColor(plant.isOverdue ? .red : .blue)
                     }
                     .padding(.vertical, 4)
                 }
-                .listStyle(InsetGroupedListStyle())
             }
             .navigationTitle("My Plants")
             .toolbar {
