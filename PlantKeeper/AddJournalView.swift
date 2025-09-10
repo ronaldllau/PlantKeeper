@@ -7,23 +7,56 @@
 
 
 import SwiftUI
+import PhotosUI
 
 struct AddJournalView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var plant: Plant
-
+    
     @State private var text = ""
+    @State private var mood = "😊"
+    
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var selectedImage: UIImage? = nil
+        
+    var onSave: (JournalEntry) -> Void
 
     var body: some View {
         NavigationView {
-            VStack {
-                TextEditor(text: $text)
-                    .padding()
-                    .border(Color.gray.opacity(0.3), width: 1)
-                    .cornerRadius(8)
-                    .frame(minHeight: 200)
-
-                Spacer()
+            Form {
+                Section(header: Text("Notes")) {
+                    TextEditor(text: $text)
+                        .frame(height: 100)
+                }
+                
+                Section(header: Text("Mood")) {
+                    Picker("Mood", selection: $mood) {
+                        Text("😊").tag("😊")
+                        Text("😢").tag("😢")
+                        Text("🌱").tag("🌱")
+                        Text("🌸").tag("🌸")
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                }
+                
+                Section(header: Text("Photo")) {
+                    if let image = selectedImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 150)
+                    }
+                    PhotosPicker("Add Photo",
+                                 selection: $selectedItem,
+                                 matching: .images)
+                    .onChange(of: selectedItem) { _, newItem in
+                        Task {
+                            if let data = try? await newItem?.loadTransferable(type: Data.self),
+                               let uiImage = UIImage(data: data) {
+                                selectedImage = uiImage
+                            }
+                        }
+                    }
+                }
             }
             .navigationTitle("New Journal")
             .toolbar {
@@ -34,10 +67,13 @@ struct AddJournalView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        if !text.isEmpty {
-                            let entry = JournalEntry(text: text, date: Date())
-                            plant.journals.append(entry)
-                        }
+                        let entry = JournalEntry(
+                            text: text,
+                            date: Date(),
+                            photo: selectedImage?.jpegData(compressionQuality: 0.8),
+                            mood: mood
+                        )
+                        onSave(entry)
                         dismiss()
                     }
                     .disabled(text.isEmpty)

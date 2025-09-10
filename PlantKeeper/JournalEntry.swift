@@ -11,6 +11,8 @@ struct JournalEntry: Identifiable {
     let id = UUID()
     let text: String
     let date: Date
+    var photo: Data?   // optional, stores image data
+    var mood: String?  // optional, e.g. "😊", "😢", "🌱"
 }
 
 extension JournalEntry {

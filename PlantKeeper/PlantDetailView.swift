@@ -21,7 +21,7 @@ struct PlantDetailView: View {
                     .scaledToFit()
                     .frame(width: 60, height: 60)
                     .foregroundColor(.green)
-
+                
                 VStack(alignment: .leading) {
                     Text(plant.name)
                         .font(.largeTitle)
@@ -32,13 +32,13 @@ struct PlantDetailView: View {
                 }
             }
             Divider()
-
+            
             Text("Next watering: \(plant.nextWateringDate, style: .date)")
                 .font(.headline)
                 .foregroundColor(.blue)
-
+            
             Spacer()
-
+            
             Button(action: {
                 markAsWatered()
             }) {
@@ -52,42 +52,41 @@ struct PlantDetailView: View {
             }
             
             Spacer()
-
+            
         }
         .padding()
         
-
         List {
             if plant.journals.isEmpty {
-
+                
+                HStack {
+                    Image(systemName: "book")
+                        .font(.largeTitle)
+                        .foregroundColor(Color.gray)
+                    //.padding()
+                    //.background(Color.black.opacity(0.1))
+                    
                     HStack {
-                        Image(systemName: "book")
-                            .font(.largeTitle)
-                            .foregroundColor(Color.gray)
-//                            .padding()
-//                            .background(Color.black.opacity(0.1))
-                        
-                        HStack {
-                            Spacer()
-                            VStack(spacing: 8) {
-                                Text("No journal entries yet")
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
-                                Text("Start \(plant.name)’s journey 🌱")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-//                            .background(Color.black.opacity(0.1))
-                            Spacer()
+                        Spacer()
+                        VStack(spacing: 8) {
+                            Text("No journal entries yet")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Text("Start \(plant.name)’s journey 🌱")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
+                        //                            .background(Color.black.opacity(0.1))
+                        Spacer()
                     }
-                    .padding()
-//                    .background(Color.green.opacity(0.1))
+                }
+                .padding()
+                //                    .background(Color.green.opacity(0.1))
             } else {
                 ForEach(plant.journals) { entry in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(entry.text)
-                            .font(.body)
+                    VStack(alignment: .leading, spacing: 8) {
+                        //                        Text(entry.text)
+                        //                            .font(.body)
                         if entry.isFromToday {
                             Text("Today")
                                 .font(.caption)
@@ -97,8 +96,23 @@ struct PlantDetailView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
+                        
+                        if let mood = entry.mood {
+                            Text("Mood: \(mood)")
+                        }
+                        
+                        Text(entry.text)
+                        
+                        if let data = entry.photo,
+                           let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 120)
+                                .cornerRadius(8)
+                        }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 6)
                     .swipeActions(edge: .leading) {
                         if entry.isFromToday {
                             Button {
@@ -131,7 +145,9 @@ struct PlantDetailView: View {
             }
         }
         .sheet(isPresented: $showingAddJournal) {
-            AddJournalView(plant: $plant)
+            AddJournalView{ entry in
+                plant.journals.append(entry)
+            }
         }
         .sheet(item: $editingEntry) { entry in
             EditJournalView(entry: entry, plant: $plant)
