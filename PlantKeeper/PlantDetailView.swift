@@ -37,7 +37,7 @@ struct PlantDetailView: View {
                 .font(.headline)
                 .foregroundColor(.blue)
             
-            Spacer()
+//            Spacer()
             
             Button(action: {
                 markAsWatered()
@@ -51,92 +51,19 @@ struct PlantDetailView: View {
                     .cornerRadius(12)
             }
             
-            Spacer()
+//            Spacer()
+            
+            
             
         }
         .padding()
         
-        List {
-            if plant.journals.isEmpty {
-                
-                HStack {
-                    Image(systemName: "book")
-                        .font(.largeTitle)
-                        .foregroundColor(Color.gray)
-                    //.padding()
-                    //.background(Color.black.opacity(0.1))
-                    
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 8) {
-                            Text("No journal entries yet")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                            Text("Start \(plant.name)’s journey 🌱")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        //                            .background(Color.black.opacity(0.1))
-                        Spacer()
-                    }
-                }
-                .padding()
-                //                    .background(Color.green.opacity(0.1))
-            } else {
-                ForEach(plant.journals) { entry in
-                    VStack(alignment: .leading, spacing: 8) {
-                        //                        Text(entry.text)
-                        //                            .font(.body)
-                        if entry.isFromToday {
-                            Text("Today")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        } else {
-                            Text(entry.date, style: .date)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        if let mood = entry.mood {
-                            Text("Mood: \(mood)")
-                        }
-                        
-                        Text(entry.text)
-                        
-                        if let data = entry.photo,
-                           let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 120)
-                                .cornerRadius(8)
-                        }
-                    }
-                    .padding(.vertical, 6)
-                    .swipeActions(edge: .leading) {
-                        if entry.isFromToday {
-                            Button {
-                                editingEntry = entry
-                            } label: {
-                                Label("Edit", systemImage: "pencil")
-                            }
-                            .tint(.blue)
-                        }
-                    }
-                    .swipeActions(edge: .trailing) {
-                        if entry.isFromToday {
-                            Button(role: .destructive) {
-                                deleteEntry(entry)
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-//        .navigationTitle(plant.name)
+//        Spacer()
+            
+        JournalList(plant: $plant, editingEntry: $editingEntry)
+        
+//        Spacer()
+        
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingAddJournal = true }) {
@@ -150,15 +77,17 @@ struct PlantDetailView: View {
             }
         }
         .sheet(item: $editingEntry) { entry in
-            EditJournalView(entry: entry, plant: $plant)
+            if let index = plant.journals.firstIndex(where: { $0.id == entry.id }) {
+                EditJournalView(entry: $plant.journals[index])
+            }
         }
     }
     
-    func deleteEntry(_ entry: JournalEntry) {
-        if let index = plant.journals.firstIndex(where: { $0.id == entry.id }) {
-            plant.journals.remove(at: index)
-        }
-    }
+//    func deleteEntry(_ entry: JournalEntry) {
+//        if let index = plant.journals.firstIndex(where: { $0.id == entry.id }) {
+//            plant.journals.remove(at: index)
+//        }
+//    }
     
     func markAsWatered() {
         plant.lastWatered = Date()

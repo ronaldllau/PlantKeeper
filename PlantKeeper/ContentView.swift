@@ -8,9 +8,16 @@
 import SwiftUI
 
 let samplePlants = [
-    Plant(name: "Fern", species: "Boston Fern", wateringFrequency: 3),
+    Plant(name: "Fern", species: "Boston Fern", journals:
+            sampleJournal, wateringFrequency: 3),
     Plant(name: "Cactus", species: "Golden Barrel", wateringFrequency: 5),
     Plant(name: "Aloe Vera", species: "Aloe", wateringFrequency: 10)
+]
+
+let sampleJournal = [
+    JournalEntry(date: Date().addingTimeInterval(-86400 * 5), text: "Planted the fern.", mood: "🌱"),
+    JournalEntry(date: Date(), text: "Watered the fern.", mood: "💧")
+    
 ]
 
 struct ContentView: View {
