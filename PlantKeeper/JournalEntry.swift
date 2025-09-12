@@ -12,25 +12,13 @@ struct JournalEntry: Identifiable {
     let id = UUID()
     let date: Date
     var text: String
-    var photo: Data?    // optional, stores image data
-    var mood: String    // e.g. "😊", "😢", "🌱"
+    var photo: JournalPhoto?    // optional, stores image data
+    var mood: Mood             // e.g. "😊", "😢", "🌱"
 }
 
 extension JournalEntry {
     var isFromToday: Bool {
         Calendar.current.isDateInToday(date)
-    }
-    
-    var uiImage: UIImage? {
-        get {
-            if let data = photo {
-                return UIImage(data: data)
-            }
-            return nil
-        }
-        set {
-            photo = newValue?.jpegData(compressionQuality: 0.8)
-        }
     }
 }
 

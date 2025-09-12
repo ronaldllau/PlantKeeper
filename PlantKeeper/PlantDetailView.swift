@@ -36,9 +36,7 @@ struct PlantDetailView: View {
             Text("Next watering: \(plant.nextWateringDate, style: .date)")
                 .font(.headline)
                 .foregroundColor(.blue)
-            
-//            Spacer()
-            
+                        
             Button(action: {
                 markAsWatered()
             }) {
@@ -50,20 +48,11 @@ struct PlantDetailView: View {
                     .foregroundColor(.blue)
                     .cornerRadius(12)
             }
-            
-//            Spacer()
-            
-            
-            
         }
         .padding()
-        
-//        Spacer()
-            
+                    
         JournalList(plant: $plant, editingEntry: $editingEntry)
-        
-//        Spacer()
-        
+                
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingAddJournal = true }) {
@@ -82,12 +71,6 @@ struct PlantDetailView: View {
             }
         }
     }
-    
-//    func deleteEntry(_ entry: JournalEntry) {
-//        if let index = plant.journals.firstIndex(where: { $0.id == entry.id }) {
-//            plant.journals.remove(at: index)
-//        }
-//    }
     
     func markAsWatered() {
         plant.lastWatered = Date()
