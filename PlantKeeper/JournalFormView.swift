@@ -9,7 +9,7 @@ import PhotosUI
 
 struct JournalFormView: View {
     @Binding var text: String
-    @Binding var mood: String
+    @Binding var mood: Mood
     @Binding var selectedImage: UIImage?
     @Binding var selectedItem: PhotosPickerItem?
     
@@ -37,27 +37,20 @@ private struct NotesSection: View {
 }
         
 private struct MoodSection: View {
-    @Binding var selectedMood: String
-    private let moods = ["😊", "😢", "🌱", "🌸"]
+    @Binding var selectedMood: Mood
     
     var body: some View {
         Section("Mood") {
             HStack {
-                ForEach(moods, id: \.self) { mood in
-                    Button {
-                        selectedMood = mood
-                    } label: {
-                        Text(mood)
-                            .font(.largeTitle)
-                            .padding(8)
-                            .background(
-                                Circle()
-                                    .fill(mood == selectedMood ? Color.blue.opacity(0.3) : .clear)
-                            )
-                    }
-                    .buttonStyle(.plain)
+                ForEach(Mood.allCases) { mood in
+                    Text(mood.rawValue)
+                        .font(.largeTitle)
+                        .padding(4)
+                        .background(
+                            Circle().fill(mood == selectedMood ? Color.blue.opacity(0.3) : .clear)
+                        )
+                        .onTapGesture { selectedMood = mood }
                 }
-                Spacer()
             }
             .padding(.vertical, 4)
         }

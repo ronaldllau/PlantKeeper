@@ -13,7 +13,7 @@ struct EditJournalView: View {
     @Binding var entry: JournalEntry
     @Environment(\.dismiss) private var dismiss
     @State private var text: String
-    @State private var mood: String
+    @State private var mood: Mood
     @State private var selectedImage: UIImage?
     @State private var selectedItem: PhotosPickerItem?
     
@@ -21,7 +21,7 @@ struct EditJournalView: View {
         _entry = entry
         _text = State(initialValue: entry.wrappedValue.text)
         _mood = State(initialValue: entry.wrappedValue.mood)
-        _selectedImage = State(initialValue: entry.wrappedValue.uiImage)
+        _selectedImage = State(initialValue: entry.wrappedValue.photo?.uiImage)
     }
     
     var body: some View {
@@ -34,7 +34,7 @@ struct EditJournalView: View {
             Button("Save") {
                 entry.text = text
                 entry.mood = mood
-                entry.uiImage = selectedImage
+                entry.photo = selectedImage.map { JournalPhoto(uiImage: $0) }
                 dismiss()
             }
             .buttonStyle(.borderedProminent)
