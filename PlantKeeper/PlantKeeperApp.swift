@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UserNotifications
+import SwiftData
 
 @main
 struct PlantKeeperApp: App {
@@ -19,6 +20,7 @@ struct PlantKeeperApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Plant.self, JournalEntry.self, JournalPhoto.self])
     }
     
     func requestNotificationPermission() {

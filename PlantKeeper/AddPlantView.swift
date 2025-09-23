@@ -9,8 +9,9 @@
 import SwiftUI
 
 struct AddPlantView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
-    @Binding var plants: [Plant]
+//    @Binding var plants: [Plant]
 
     @State private var name = ""
     @State private var species = ""
@@ -41,7 +42,7 @@ struct AddPlantView: View {
                             species: species,
                             wateringFrequency: wateringFrequency
                         )
-                        plants.append(newPlant)
+                        modelContext.insert(newPlant)
 
                         scheduleWateringReminder(for: newPlant, in: wateringFrequency) // remind in 2 days
                         

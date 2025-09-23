@@ -8,9 +8,11 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftData
 
 struct AddJournalView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var modelContext
     
     @State private var text = ""
     @State private var mood = Mood.happy
@@ -21,24 +23,30 @@ struct AddJournalView: View {
     var onSave: (JournalEntry) -> Void
     
     var body: some View {
-            VStack {
-                JournalFormView(text: $text,
-                                mood: $mood,
-                                selectedImage: $selectedImage,
-                                selectedItem: $selectedItem)
+        VStack {
+            JournalFormView(text: $text,
+                          mood: $mood,
+                          selectedImage: $selectedImage,
+                          selectedItem: $selectedItem)
 
-                Button("Save") {
-                    let newEntry = JournalEntry(
-                        date: Date(),
-                        text: text,
-                        photo: selectedImage.map { JournalPhoto(uiImage: $0) },
-                        mood: mood
-                    )
-                    onSave(newEntry)
-                    dismiss()
+            Button("Save") {
+                let photo = selectedImage.map { JournalPhoto(uiImage: $0) }
+                if let photo = photo {
+                    modelContext.insert(photo)
                 }
-                .buttonStyle(.borderedProminent)
-                .padding()
+                
+                let newEntry = JournalEntry(
+                    date: Date(),
+                    text: text,
+                    photo: photo,
+                    mood: mood
+                )
+                modelContext.insert(newEntry)
+                onSave(newEntry)
+                dismiss()
             }
+            .buttonStyle(.borderedProminent)
+            .padding()
         }
+    }
 }

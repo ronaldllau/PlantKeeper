@@ -7,13 +7,23 @@
 
 import Foundation
 import PhotosUI
+import SwiftData
 
-struct JournalEntry: Identifiable {
-    let id = UUID()
-    let date: Date
+@Model
+final class JournalEntry {
+    var id: UUID
+    var date: Date
     var text: String
-    var photo: JournalPhoto?    // optional, stores image data
-    var mood: Mood             // e.g. "😊", "😢", "🌱"
+    var photo: JournalPhoto?
+    var mood: Mood
+    
+    init(date: Date = Date(), text: String, photo: JournalPhoto? = nil, mood: Mood) {
+        self.id = UUID()
+        self.date = date
+        self.text = text
+        self.photo = photo
+        self.mood = mood
+    }
 }
 
 extension JournalEntry {
@@ -21,5 +31,3 @@ extension JournalEntry {
         Calendar.current.isDateInToday(date)
     }
 }
-
-

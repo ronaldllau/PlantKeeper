@@ -7,9 +7,12 @@
 
 
 import SwiftUI
+import SwiftData
+import UserNotifications
 
 struct PlantDetailView: View {
-    @Binding var plant: Plant
+    @Environment(\.modelContext) private var modelContext
+    @Bindable var plant: Plant  // Changed to @Bindable for SwiftData
     @State private var showingAddJournal = false
     @State private var editingEntry: JournalEntry?
 
@@ -51,7 +54,7 @@ struct PlantDetailView: View {
         }
         .padding()
                     
-        JournalList(plant: $plant, editingEntry: $editingEntry)
+        JournalList(plant: plant, editingEntry: $editingEntry)  // Now passes plant directly
                 
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -61,19 +64,19 @@ struct PlantDetailView: View {
             }
         }
         .sheet(isPresented: $showingAddJournal) {
-            AddJournalView{ entry in
+            AddJournalView { entry in
                 plant.journals.append(entry)
+                try? modelContext.save()
             }
         }
         .sheet(item: $editingEntry) { entry in
-            if let index = plant.journals.firstIndex(where: { $0.id == entry.id }) {
-                EditJournalView(entry: $plant.journals[index])
-            }
+            EditJournalView(entry: entry)
         }
     }
     
     func markAsWatered() {
         plant.lastWatered = Date()
+        try? modelContext.save()
 
         // Reschedule the reminder from today
         scheduleWateringReminder(for: plant, in: plant.wateringFrequency)
@@ -107,5 +110,10 @@ struct PlantDetailView: View {
 }
 
 #Preview {
-    ContentView()
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Plant.self, configurations: config)
+    let plant = Plant(name: "Test Plant", species: "Test Species", wateringFrequency: 7)
+    container.mainContext.insert(plant)
+    return PlantDetailView(plant: plant)
+        .modelContainer(container)
 }
